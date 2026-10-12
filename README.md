@@ -5,10 +5,10 @@ TaskFlow UI — React (Vite). **Consumes** the API contract only; never talks to
 | Repo | Role |
 |------|------|
 | [taskflow-db](https://github.com/Sameer-Ahmed-S/taskflow-db) | Postgres schema + migrations |
-| [taskflow-backend](https://github.com/Sameer-Ahmed-S/taskflow-backend) | Express API + authoritative spec |
+| [taskflow-backend](https://github.com/Sameer-Ahmed-S/taskflow-backend) | Express API implementing the contract |
 | **taskflow-frontend** (this) | React SPA |
 
-The contract this app implements against: [`taskflow-backend/spec/contracts/tasks-api.yaml`](https://github.com/Sameer-Ahmed-S/taskflow-backend/blob/main/spec/contracts/tasks-api.yaml).
+The authoritative spec is **not in GitHub** — it lives locally at `..\spec\` (relative to this repo, i.e. `taskflow-demo\spec\`). The contract this app implements against: `..\spec\contracts\tasks-api.yaml`.
 
 ## Run locally
 
