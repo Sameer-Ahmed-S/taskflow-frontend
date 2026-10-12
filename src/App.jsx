@@ -8,9 +8,13 @@ const COLUMNS = [
   { key: 'done', label: 'Done' },
 ];
 
+// FR-7..FR-10 (spec 001): task priority
+const PRIORITIES = ['low', 'medium', 'high'];
+
 export default function App() {
   const [tasks, setTasks] = useState([]);
   const [title, setTitle] = useState('');
+  const [priority, setPriority] = useState('medium'); // FR-8
   const [error, setError] = useState(null);
 
   async function refresh() {
@@ -28,8 +32,9 @@ export default function App() {
     e.preventDefault();
     if (!title.trim()) return;
     try {
-      await api.createTask({ title: title.trim() }); // FR-1
+      await api.createTask({ title: title.trim(), priority }); // FR-1 + FR-8
       setTitle('');
+      setPriority('medium');
       refresh();
     } catch (err) { setError(err.message); }
   }
@@ -37,6 +42,13 @@ export default function App() {
   async function onStatusChange(task, status) {
     try {
       await api.updateTask(task.id, { status }); // FR-4
+      refresh();
+    } catch (err) { setError(err.message); }
+  }
+
+  async function onPriorityChange(task, newPriority) {
+    try {
+      await api.updateTask(task.id, { priority: newPriority }); // FR-9
       refresh();
     } catch (err) { setError(err.message); }
   }
@@ -58,6 +70,11 @@ export default function App() {
           placeholder="New task title…"
           maxLength={200}
         />
+        <select value={priority} onChange={(e) => setPriority(e.target.value)}>
+          {PRIORITIES.map((p) => (
+            <option key={p} value={p}>{p}</option>
+          ))}
+        </select>
         <button type="submit">Add</button>
       </form>
       {error && <p className="error">{error}</p>}
@@ -68,6 +85,7 @@ export default function App() {
             {tasks.filter((t) => t.status === col.key).map((task) => (
               <article key={task.id} className="card">
                 <strong>{task.title}</strong>
+                <span className={`badge priority-${task.priority}`}>{task.priority}</span>
                 {task.description && <p>{task.description}</p>}
                 <div className="card-actions">
                   <select
@@ -76,6 +94,14 @@ export default function App() {
                   >
                     {COLUMNS.map((c) => (
                       <option key={c.key} value={c.key}>{c.label}</option>
+                    ))}
+                  </select>
+                  <select
+                    value={task.priority}
+                    onChange={(e) => onPriorityChange(task, e.target.value)}
+                  >
+                    {PRIORITIES.map((p) => (
+                      <option key={p} value={p}>{p}</option>
                     ))}
                   </select>
                   <button onClick={() => onDelete(task)}>Delete</button>
